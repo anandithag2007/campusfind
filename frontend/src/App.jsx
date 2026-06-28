@@ -1,27 +1,26 @@
+import { useEffect, useState } from "react";
+import "./App.css";
+
 function App() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/lost-items")
+      .then((response) => response.json())
+      .then((data) => setItems(data));
+  }, []);
+
   return (
-    <div>
+    <div className="container">
       <h1>CampusFind</h1>
+      <h2>Lost Items</h2>
 
-      <h2>Lost & Found Management System</h2>
-
-      <p>
-        Helping students recover lost items quickly and efficiently.
-      </p>
-
-      <hr />
-
-      <h3>Features</h3>
-
-      <ul>
-        <li>Report Lost Items</li>
-        <li>Report Found Items</li>
-        <li>Claim Verification</li>
-        <li>Admin Dashboard</li>
-      </ul>
-
-      <button>Report Lost Item</button>
-      <button>Report Found Item</button>
+      {items.map((item) => (
+        <div className="card" key={item.id}>
+          <h3>{item.item}</h3>
+          <p>Location: {item.location}</p>
+        </div>
+      ))}
     </div>
   );
 }
