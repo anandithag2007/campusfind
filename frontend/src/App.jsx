@@ -12,6 +12,24 @@ function App() {
       .then((data) => setItems(data));
   }, []);
 
+  const addItem = () => {
+  if (!itemName || !location) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  const newItem = {
+    id: items.length + 1,
+    item: itemName,
+    location: location,
+  };
+
+  setItems([...items, newItem]);
+
+  setItemName("");
+  setLocation("");
+};
+
   return (
     <div className="container">
       <h1>CampusFind</h1>
@@ -35,8 +53,7 @@ function App() {
 
 <br /><br />
 
-<button>Report Item</button>
-      <h2>Lost Items</h2>
+<button onClick={addItem}>Report Item</button>      <h2>Lost Items</h2>
 
       {items.map((item) => (
         <div className="card" key={item.id}>
