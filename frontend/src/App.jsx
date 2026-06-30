@@ -6,6 +6,11 @@ function App() {
   const [itemName, setItemName] = useState("");
   const [location, setLocation] = useState("");
 
+  const [foundItems, setFoundItems] = useState([
+    { id: 1, item: "Water Bottle", location: "Canteen" },
+    { id: 2, item: "Umbrella", location: "Block A" },
+  ]);
+
   useEffect(() => {
     fetch("http://localhost:5000/lost-items")
       .then((response) => response.json())
@@ -13,49 +18,63 @@ function App() {
   }, []);
 
   const addItem = () => {
-  if (!itemName || !location) {
-    alert("Please fill all fields");
-    return;
-  }
+    if (!itemName || !location) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  const newItem = {
-    id: items.length + 1,
-    item: itemName,
-    location: location,
+    const newItem = {
+      id: items.length + 1,
+      item: itemName,
+      location: location,
+    };
+
+    setItems([...items, newItem]);
+
+    setItemName("");
+    setLocation("");
   };
-
-  setItems([...items, newItem]);
-
-  setItemName("");
-  setLocation("");
-};
 
   return (
     <div className="container">
       <h1>CampusFind</h1>
+
       <h2>Report Lost Item</h2>
 
-<input
-  type="text"
-  placeholder="Item Name"
-  value={itemName}
-  onChange={(e) => setItemName(e.target.value)}
-/>
+      <input
+        type="text"
+        placeholder="Item Name"
+        value={itemName}
+        onChange={(e) => setItemName(e.target.value)}
+      />
 
-<br /><br />
+      <br />
+      <br />
 
-<input
-  type="text"
-  placeholder="Location"
-  value={location}
-  onChange={(e) => setLocation(e.target.value)}
-/>
+      <input
+        type="text"
+        placeholder="Location"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+      />
 
-<br /><br />
+      <br />
+      <br />
 
-<button onClick={addItem}>Report Item</button>      <h2>Lost Items</h2>
+      <button onClick={addItem}>Report Item</button>
+
+      <h2>Lost Items</h2>
 
       {items.map((item) => (
+        <div className="card" key={item.id}>
+          <h3>{item.item}</h3>
+          <p>Location: {item.location}</p>
+        </div>
+      ))}
+
+      <h2>Found Items</h2>
+
+      {foundItems.map((item) => (
         <div className="card" key={item.id}>
           <h3>{item.item}</h3>
           <p>Location: {item.location}</p>
