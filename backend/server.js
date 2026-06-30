@@ -24,6 +24,19 @@ const lostItems = [
   },
 ];
 
+const foundItems = [
+  {
+    id: 1,
+    item: "Water Bottle",
+    location: "Canteen",
+  },
+  {
+    id: 2,
+    item: "Umbrella",
+    location: "Block A",
+  },
+];
+
 app.get("/", (req, res) => {
   res.json({
     message: "CampusFind Backend Running Successfully",
@@ -44,6 +57,22 @@ app.post("/lost-items", (req, res) => {
   lostItems.push(newItem);
 
   res.status(201).json(newItem);
+});
+
+app.get("/found-items", (req, res) => {
+  res.json(foundItems);
+});
+
+app.post("/found-items", (req, res) => {
+  const newItem = {
+    id: foundItems.length + 1,
+    item: req.body.item,
+    location: req.body.location,
+  };
+
+  foundItems.push(newItem);
+
+  res.json(newItem);
 });
 
 const PORT = 5000;

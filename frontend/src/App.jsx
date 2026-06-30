@@ -5,45 +5,38 @@ function App() {
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState("");
   const [location, setLocation] = useState("");
-
+  const [search, setSearch] = useState("");
+  const [foundItems, setFoundItems] = useState([]);
   const [foundItemName, setFoundItemName] = useState("");
   const [foundLocation, setFoundLocation] = useState("");
-
-  const [foundItems, setFoundItems] = useState([
-    { id: 1, item: "Water Bottle", location: "Canteen" },
-    { id: 2, item: "Umbrella", location: "Block A" },
-  ]);
 
   useEffect(() => {
     fetch("http://localhost:5000/lost-items")
       .then((response) => response.json())
       .then((data) => setItems(data));
+
+    fetch("http://localhost:5000/found-items")
+      .then((response) => response.json())
+      .then((data) => setFoundItems(data));
   }, []);
 
-  const addItem = async () => {
-  if (!itemName || !location) {
-    alert("Please fill all fields");
-    return;
-  }
+  const addItem = () => {
+    if (!itemName || !location) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  const response = await fetch("http://localhost:5000/lost-items", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    const newItem = {
+      id: items.length + 1,
       item: itemName,
       location: location,
-    }),
-  });
+    };
 
-  const newItem = await response.json();
+    setItems([...items, newItem]);
 
-  setItems([...items, newItem]);
-
-  setItemName("");
-  setLocation("");
-};
+    setItemName("");
+    setLocation("");
+  };
 
   const addFoundItem = () => {
     if (!foundItemName || !foundLocation) {
@@ -51,16 +44,22 @@ function App() {
       return;
     }
 
-    const newFoundItem = {
-      id: foundItems.length + 1,
-      item: foundItemName,
-      location: foundLocation,
-    };
-
-    setFoundItems([...foundItems, newFoundItem]);
-
-    setFoundItemName("");
-    setFoundLocation("");
+    fetch("http://localhost:5000/found-items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        item: foundItemName,
+        location: foundLocation,
+      }),
+    })
+      .then((response) => response.json())
+      .then((newItem) => {
+        setFoundItems([...foundItems, newItem]);
+        setFoundItemName("");
+        setFoundLocation("");
+      });
   };
 
   return (
@@ -91,43 +90,57 @@ function App() {
 
       <button onClick={addItem}>Report Item</button>
 
+      <input
+        type="text"
+        placeholder="Search items..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+<br />
+<br />
+
       <h2>Lost Items</h2>
 
-      {items.map((item) => (
-        <div className="card" key={item.id}>
-          <h3>{item.item}</h3>
-          <p>Location: {item.location}</p>
-        </div>
-      ))}
+      {items
+  .filter((item) =>
+    item.item.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((item) => (
+    <div className="card lost-card" key={item.id}>
+      <h3>{item.item}</h3>
+      <p>Location: {item.location}</p>
+    </div>
+  ))}
 
-    <h2>Report Found Item</h2>
+      <h2>Report Found Item</h2>
 
-<input
-  type="text"
-  placeholder="Found Item Name"
-  value={foundItemName}
-  onChange={(e) => setFoundItemName(e.target.value)}
-/>
+      <input
+        type="text"
+        placeholder="Found Item Name"
+        value={foundItemName}
+        onChange={(e) => setFoundItemName(e.target.value)}
+      />
 
-<br />
-<br />
+      <br />
+      <br />
 
-<input
-  type="text"
-  placeholder="Found Location"
-  value={foundLocation}
-  onChange={(e) => setFoundLocation(e.target.value)}
-/>
+      <input
+        type="text"
+        placeholder="Found Location"
+        value={foundLocation}
+        onChange={(e) => setFoundLocation(e.target.value)}
+      />
 
-<br />
-<br />
+      <br />
+      <br />
 
-<button onClick={addFoundItem}>Add Found Item</button>
+      <button onClick={addFoundItem}>Add Found Item</button>
 
       <h2>Found Items</h2>
 
       {foundItems.map((item) => (
-        <div className="card" key={item.id}>
+        <div className="card found-card" key={item.id}>
           <h3>{item.item}</h3>
           <p>Location: {item.location}</p>
         </div>
