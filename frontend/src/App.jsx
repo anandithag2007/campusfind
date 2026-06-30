@@ -20,23 +20,30 @@ function App() {
       .then((data) => setItems(data));
   }, []);
 
-  const addItem = () => {
-    if (!itemName || !location) {
-      alert("Please fill all fields");
-      return;
-    }
+  const addItem = async () => {
+  if (!itemName || !location) {
+    alert("Please fill all fields");
+    return;
+  }
 
-    const newItem = {
-      id: items.length + 1,
+  const response = await fetch("http://localhost:5000/lost-items", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       item: itemName,
       location: location,
-    };
+    }),
+  });
 
-    setItems([...items, newItem]);
+  const newItem = await response.json();
 
-    setItemName("");
-    setLocation("");
-  };
+  setItems([...items, newItem]);
+
+  setItemName("");
+  setLocation("");
+};
 
   const addFoundItem = () => {
     if (!foundItemName || !foundLocation) {

@@ -34,6 +34,18 @@ app.get("/lost-items", (req, res) => {
   res.json(lostItems);
 });
 
+app.post("/lost-items", (req, res) => {
+  const newItem = {
+    id: lostItems.length + 1,
+    item: req.body.item,
+    location: req.body.location,
+  };
+
+  lostItems.push(newItem);
+
+  res.status(201).json(newItem);
+});
+
 const PORT = 5000;
 
 app.listen(PORT, () => {
