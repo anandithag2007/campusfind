@@ -6,6 +6,7 @@ function App() {
   const [itemName, setItemName] = useState("");
   const [location, setLocation] = useState("");
   const [search, setSearch] = useState("");
+  const [foundSearch, setFoundSearch] = useState("");
   const [foundItems, setFoundItems] = useState([]);
   const [foundItemName, setFoundItemName] = useState("");
   const [foundLocation, setFoundLocation] = useState("");
@@ -137,14 +138,27 @@ function App() {
 
       <button onClick={addFoundItem}>Add Found Item</button>
 
+      <input
+  type="text"
+  placeholder="Search found items..."
+  value={foundSearch}
+  onChange={(e) => setFoundSearch(e.target.value)}
+/>
+
+<br />
+<br />
+      
       <h2>Found Items</h2>
 
-      {foundItems.map((item) => (
-        <div className="card found-card" key={item.id}>
-          <h3>{item.item}</h3>
-          <p>Location: {item.location}</p>
-        </div>
-      ))}
+      {foundItems  .filter((item) =>
+    item.item.toLowerCase().includes(foundSearch.toLowerCase())
+  )
+  .map((item) => (
+    <div className="card found-card" key={item.id}>
+      <h3>{item.item}</h3>
+      <p>Location: {item.location}</p>
+    </div>
+  ))}
     </div>
   );
 }
